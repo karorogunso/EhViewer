@@ -134,12 +134,16 @@
     <string name="error_invalid_number">Invalid number</string>
     <string name="error_please_login_first">Please login first</string>
     <string name="error_empty_html">Empty page</string>
+    <string name="error_cant_get_image">Can\'t get image</string>
+
+    <string name="kokomade_tip">Settings->Eh->Gallery Site->e-hentai</string>
 
     <string name="app_waring">The content of this application is from the Internet. Some of it may do physical or mental harm to you. You have learnt the risks above and would like to undertake them.</string>
     <string name="error_username_cannot_empty">Username cannot be an empty string</string>
     <string name="error_password_cannot_empty">Password cannot be an empty string</string>
     <string name="skip_signing_in">Continue without signing in</string>
     <string name="sign_in_failed">Sign in failed</string>
+    <string name="sign_in_failed_tip">If this issue continues, try \"Sign in via WebView\" or \"Sign in via cookies\"</string>
     <string name="sign_in_failed_plain">Perhaps it is a mistake due to website update or something wrong happened. You may try sign in via WebView or enter cookie or skip signing in under sign in button. But you may be a "Sad Panda" after skipping signing in. Try "Sign in via cookies" first if you had signed in on 0.6.x version.</string>
     <string name="press_twice_exit">Press twice to exit</string>
     <string name="content_layout_restore_tip">Tap to retry</string>
@@ -214,6 +218,7 @@
     <string name="remove_from_favourites">Remove from favourites</string>
 
     <string name="stop_downloading">Stop downloading</string>
+    <string name="delete_downloads">Delete downloads</string>
 
     <string name="quick_search">Quick search</string>
     <string name="quick_search_tip">Tap \"+\" to add Quick Search</string>
@@ -338,6 +343,8 @@
     <string name="cancel_vote_down_successfully">Down-vote cancelled successfully</string>
     <string name="vote_failed">Vote failed</string>
     <string name="check_vote_status">View vote details</string>
+    <string name="click_more_comments">Click to load more comments</string>
+    <string name="last_edited">Last edited: %s</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">Gallery Previews</string>
@@ -372,6 +379,12 @@
     <string name="download_labels">Download labels</string>
     <string name="download_start_all">Start all</string>
     <string name="download_stop_all">Stop all</string>
+    <string name="download_select_all">Select all</string>
+    <string name="download_edit_mode">Edit mode</string>
+    <string name="download_select_below">Select below</string>
+    <string name="download_select_read">Select read</string>
+    <string name="download_start_all_reversed">Start all(reversed)</string>
+    <string name="download_select_done">Select done</string>
     <string name="download_reset_reading_progress">Reset reading progress</string>
     <string name="reset_reading_progress_message">Reset the reading progress of all downloaded galleries?</string>
     <string name="download_service_label">EhViewer Download Service</string>
@@ -437,6 +450,11 @@
     <string name="edit_host_delete">Delete</string>
     <string name="invalid_host">Invalid host</string>
     <string name="invalid_ip">Invalid IP</string>
+
+    <!-- DirPickerActivity -->
+    <string name="preset">Preset</string>
+    <string name="default_directory">Default directory</string>
+    <string name="application_file_directory">App file directory %d (it will be remove after uninstalling the app)</string>
 
     <!-- Gallery Activity -->
     <string name="page_menu_title">Page %d</string>
@@ -508,6 +526,7 @@
     <string name="settings_read_screen_rotation_default">Default</string>
     <string name="settings_read_screen_rotation_portrait">Portrait</string>
     <string name="settings_read_screen_rotation_landscape">Landscape</string>
+    <string name="settings_read_screen_rotation_sensor">Auto rotate</string>
     <string name="settings_read_reading_direction">Reading direction</string>
     <string name="settings_read_reading_direction_left_to_right">Left to right</string>
     <string name="settings_read_reading_direction_right_to_Left">Right to left</string>
@@ -547,6 +566,8 @@
     <string name="settings_download_media_scan_summary_off">Most gallery apps will ignore pictures in the download path</string>
     <string name="settings_download_multi_thread_download">Multi-threaded download</string>
     <string name="settings_download_multi_thread_download_summary">Up to %s images</string>
+    <string name="settings_download_download_delay">Download delay</string>
+    <string name="settings_download_download_delay_summary">Delay %s ms per download</string>
     <string name="settings_download_preload_image">Preload image</string>
     <string name="settings_download_preload_image_summary">Preload next %s image</string>
     <string name="settings_download_image_resolution">Image resolution</string>

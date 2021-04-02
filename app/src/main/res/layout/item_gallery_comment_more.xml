@@ -15,13 +15,17 @@
   ~ limitations under the License.
   -->
 
-<resources xmlns:tools="http://schemas.android.com/tools">
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/keyline_margin">
 
-    <string-array name="tag_translation_metadata" tools:ignore="InconsistentArrays">
-        <item>tag-translations-zh-rCN.sha1</item>
-        <item>https://github.com/Mapaler/EhViewer/raw/tag-translations/tag-translations/tag-translations-zh-rCN.sha1</item>
-        <item>tag-translations-zh-rCN</item>
-        <item>https://github.com/Mapaler/EhViewer/raw/tag-translations/tag-translations/tag-translations-zh-rCN</item>
-    </string-array>
+    <TextView
+        android:id="@+id/click_more_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/click_more_comments"/>
 
-</resources>
+</FrameLayout>

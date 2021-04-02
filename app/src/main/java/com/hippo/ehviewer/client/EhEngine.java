@@ -24,7 +24,7 @@ import com.hippo.ehviewer.AppConfig;
 import com.hippo.ehviewer.GetText;
 import com.hippo.ehviewer.R;
 import com.hippo.ehviewer.Settings;
-import com.hippo.ehviewer.client.data.GalleryComment;
+import com.hippo.ehviewer.client.data.GalleryCommentList;
 import com.hippo.ehviewer.client.data.GalleryDetail;
 import com.hippo.ehviewer.client.data.GalleryInfo;
 import com.hippo.ehviewer.client.data.PreviewSet;
@@ -77,6 +77,8 @@ public class EhEngine {
     private static final String SAD_PANDA_TYPE = "image/gif";
     private static final String SAD_PANDA_LENGTH = "9615";
 
+    private static final String KOKOMADE_URL = "https://exhentai.org/img/kokomade.jpg";
+
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType MEDIA_TYPE_JPEG = MediaType.parse("image/jpeg");
 
@@ -99,6 +101,11 @@ public class EhEngine {
                 SAD_PANDA_TYPE.equals(headers.get("Content-Type")) &&
                 SAD_PANDA_LENGTH.equals(headers.get("Content-Length"))) {
             throw new EhException("Sad Panda");
+        }
+
+        // Check kokomade
+        if (body != null && body.contains(KOKOMADE_URL)) {
+            throw new EhException("今回はここまで\n\n" + GetText.getString(R.string.kokomade_tip));
         }
 
         if (e instanceof ParseException) {
@@ -134,17 +141,13 @@ public class EhEngine {
     }
 
     public static String signIn(@Nullable EhClient.Task task, OkHttpClient okHttpClient,
-            String username, String password, String recaptchaChallenge, String recaptchaResponse) throws Throwable {
+            String username, String password) throws Throwable {
         FormBody.Builder builder = new FormBody.Builder()
                 .add("UserName", username)
                 .add("PassWord", password)
                 .add("submit", "Log me in")
                 .add("CookieDate", "1")
                 .add("temporary_https", "off");
-        if (!TextUtils.isEmpty(recaptchaChallenge) && !TextUtils.isEmpty(recaptchaResponse)) {
-            builder.add("recaptcha_challenge_field", recaptchaChallenge);
-            builder.add("recaptcha_response_field", recaptchaResponse);
-        }
         String url = EhUrl.API_SIGN_IN;
         String referer = "https://forums.e-hentai.org/index.php?act=Login&CODE=00";
         String origin = "https://forums.e-hentai.org";
@@ -214,7 +217,8 @@ public class EhEngine {
         if (filter) {
             for (int i = 0, n = list.size(); i < n; i++) {
                 GalleryInfo info = list.get(i);
-                if (!sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
+                // Thumbnail mode need filter uploader again
+                if (!sEhFilter.filterUploader(info) || !sEhFilter.filterTag(info) || !sEhFilter.filterTagNamespace(info)) {
                     list.remove(i);
                     i--;
                     n--;
@@ -418,7 +422,7 @@ public class EhEngine {
         }
     }
 
-    public static GalleryComment[] commentGallery(@Nullable EhClient.Task task,
+    public static GalleryCommentList commentGallery(@Nullable EhClient.Task task,
             OkHttpClient okHttpClient, String url, String comment, String id) throws Throwable {
         FormBody.Builder builder = new FormBody.Builder();
         if (id == null) {

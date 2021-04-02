@@ -262,7 +262,7 @@ public class Settings {
     }
 
     public static final String KEY_APPLY_NAV_BAR_THEME_COLOR = "apply_nav_bar_theme_color";
-    private static final boolean DEFAULT_APPLY_NAV_BAR_THEME_COLOR = false;
+    private static final boolean DEFAULT_APPLY_NAV_BAR_THEME_COLOR = true;
 
     public static boolean getApplyNavBarThemeColor() {
         return getBoolean(KEY_APPLY_NAV_BAR_THEME_COLOR, DEFAULT_APPLY_NAV_BAR_THEME_COLOR);
@@ -674,6 +674,17 @@ public class Settings {
 
     public static void putMultiThreadDownload(int value) {
         putIntToStr(KEY_MULTI_THREAD_DOWNLOAD, value);
+    }
+
+    private static final String KEY_DOWNLOAD_DELAY = "download_delay";
+    private static final int DEFAULT_DOWNLOAD_DELAY = 0;
+
+    public static int getDownloadDelay() {
+        return getIntFromStr(KEY_DOWNLOAD_DELAY, DEFAULT_DOWNLOAD_DELAY);
+    }
+
+    public static void putDownloadDelay(int value) {
+        putIntToStr(KEY_DOWNLOAD_DELAY, value);
     }
 
     private static final String KEY_PRELOAD_IMAGE = "preload_image";

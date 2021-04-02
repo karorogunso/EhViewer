@@ -92,12 +92,16 @@
     <string name="error_invalid_number">非法数字</string>
     <string name="error_please_login_first">请先登陆</string>
     <string name="error_empty_html">页面内容为空</string>
+    <string name="error_cant_get_image">无法获取图片</string>
+
+    <string name="kokomade_tip">设置->Eh->画廊站点->e-hentai</string>
 
     <string name="app_waring">本应用中内容来自互联网，部分内容可能对您的生理及心理造成难以恢复的伤害。本应用作者不会对由本应用造成的任何后果负责。\n\n未成年人应在监护人指导下使用本应用。</string>
     <string name="error_username_cannot_empty">用户名不可为空</string>
     <string name="error_password_cannot_empty">密码不可为空</string>
     <string name="skip_signing_in">跳过登录</string>
     <string name="sign_in_failed">登录失败</string>
+    <string name="sign_in_failed_tip">若持续出错，请尝试“通过网页登录”或“通过 Cookie 登录”。</string>
     <string name="sign_in_failed_plain">这可能是网站更新导致的，也有可能是发生了奇怪的事情。您可以选择在登录按钮下方通过网页登录或者输入 cookie，或者跳过登录。跳过登录可能导致无法正常使用应用。如果你已经在 0.6.x 版登录过了，请优先尝试选择“通过 Cookie 登录”。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">点击重试</string>
@@ -170,6 +174,7 @@
     <string name="remove_from_favourites">移除收藏</string>
 
     <string name="stop_downloading">停止下载</string>
+    <string name="delete_downloads">删除下载</string>
 
     <string name="quick_search">快速搜索</string>
     <string name="quick_search_tip">点击“+”来添加快速搜索</string>
@@ -292,6 +297,8 @@
     <string name="cancel_vote_down_successfully">已不再钦定为垃圾评论</string>
     <string name="vote_failed">投票失败</string>
     <string name="check_vote_status">查看投票情况</string>
+    <string name="click_more_comments">点击加载更多评论</string>
+    <string name="last_edited">上次修改时间：%s</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">画廊预览</string>
@@ -326,6 +333,14 @@
     <string name="download_labels">下载标签</string>
     <string name="download_start_all">全部开始</string>
     <string name="download_stop_all">全部停止</string>
+    <string name="download_select_all">全选</string>
+    <string name="download_edit_mode">进入选择模式</string>
+    <string name="download_select_below">选择下方条目</string>
+    <string name="download_select_read">选择已读(至少两页)</string>
+    <string name="download_start_all_reversed">全部开始(逆序)</string>
+    <string name="download_select_done">选择已完成</string>
+    <string name="settings_download_download_delay">下载延迟</string>
+    <string name="settings_download_download_delay_summary">下载每张图片后延迟 %s 毫秒</string>
     <string name="download_reset_reading_progress">重置阅读进度</string>
     <string name="reset_reading_progress_message">重置所有已下载画廊的阅读进度？</string>
     <string name="download_service_label">EhViewer 下载服务</string>
@@ -392,6 +407,11 @@
     <string name="invalid_host">无效的 host</string>
     <string name="invalid_ip">无效的 IP</string>
 
+    <!-- DirPickerActivity -->
+    <string name="preset">预设</string>
+    <string name="default_directory">默认目录</string>
+    <string name="application_file_directory">应用文件目录 %d （应用卸载后会被删除）</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 页</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -452,8 +472,8 @@
     <string name="settings_eh_show_gallery_pages_summary">在画廊列表中显示页数</string>
     <string name="settings_eh_show_tag_translations">显示标签翻译</string>
     <string name="settings_eh_show_tag_translations_summary">显示翻译后的标签而非原始文字（需花费时间来下载数据文件）</string>
-    <string name="settings_eh_tag_translations_source">补充翻译（由 EhTagTranslator 提供）</string>
-    <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
+    <string name="settings_eh_tag_translations_source">补充翻译（由 EhTagTranslation 提供）</string>
+    <string name="settings_eh_tag_translations_source_url">https://github.com/EhTagTranslation/Editor/wiki</string>
     <string name="settings_eh_filter">屏蔽画廊</string>
     <string name="settings_eh_filter_summary">根据标题、上传者、标签屏蔽画廊</string>
     <string name="settings_eh_cellular_network_warning">移动网络警告</string>
@@ -463,6 +483,7 @@
     <string name="settings_read_screen_rotation_default">系统默认</string>
     <string name="settings_read_screen_rotation_portrait">竖屏</string>
     <string name="settings_read_screen_rotation_landscape">横屏</string>
+    <string name="settings_read_screen_rotation_sensor">自动旋转</string>
     <string name="settings_read_reading_direction">阅读方向</string>
     <string name="settings_read_reading_direction_left_to_right">从左至右</string>
     <string name="settings_read_reading_direction_right_to_Left">从右至左</string>

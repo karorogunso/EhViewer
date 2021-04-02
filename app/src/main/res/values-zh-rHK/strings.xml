@@ -92,12 +92,16 @@
     <string name="error_invalid_number">非法數字</string>
     <string name="error_please_login_first">請先登陸</string>
     <string name="error_empty_html">頁面內容為空</string>
+    <string name="error_cant_get_image">無法獲取圖片</string>
+
+    <string name="kokomade_tip">設置->Eh->畫廊站點->e-hentai</string>
 
     <string name="app_waring">本應用中內容來自互聯網，部分內容可能對您的生理及心理造成難以恢復的傷害。本應用作者不會對由本應用造成的任何後果負責。\n\n未成年人應在監護人指導下使用本應用。</string>
     <string name="error_username_cannot_empty">用户名不可為空</string>
     <string name="error_password_cannot_empty">密碼不可為空</string>
     <string name="skip_signing_in">跳過登錄</string>
     <string name="sign_in_failed">登錄失敗</string>
+    <string name="sign_in_failed_tip">若持續出錯，請嘗試“通過網頁登錄”或“通過 Cookie 登錄”。</string>
     <string name="sign_in_failed_plain">這可能是網站更新導致的，也有可能是發生了奇怪的事情。您可以選擇在登錄按鈕下方通過網頁登錄或者輸入 cookie，或者跳過登錄。跳過登錄可能導致無法正常使用應用。如果你已經在 0.6.x 版登錄過了，請優先嚐試選擇“通過 Cookie 登錄”。</string>
     <string name="press_twice_exit">再按一次退出</string>
     <string name="content_layout_restore_tip">點擊重試</string>
@@ -170,6 +174,7 @@
     <string name="remove_from_favourites">移除收藏</string>
 
     <string name="stop_downloading">停止下載</string>
+    <string name="delete_downloads">刪除下載</string>
 
     <string name="quick_search">快速搜索</string>
     <string name="quick_search_tip">點擊“+”來添加快速搜索</string>
@@ -292,6 +297,8 @@
     <string name="cancel_vote_down_successfully">已不再欽定為垃圾評論</string>
     <string name="vote_failed">投票失敗</string>
     <string name="check_vote_status">查看投票情況</string>
+    <string name="click_more_comments">點擊加載更多評論</string>
+    <string name="last_edited">上次修改時間：%s</string>
 
     <!-- Gallery Previews -->
     <string name="gallery_previews">畫廊預覽</string>
@@ -392,6 +399,11 @@
     <string name="invalid_host">無效的 host</string>
     <string name="invalid_ip">無效的 IP</string>
 
+    <!-- DirPickerActivity -->
+    <string name="preset">預設</string>
+    <string name="default_directory">默認目錄</string>
+    <string name="application_file_directory">應用文件目錄 %d （應用卸載後會被刪除）</string>
+
     <!-- Gallery Activity -->
     <string name="page_menu_title">第 %d 頁</string>
     <string name="page_menu_refresh">@string/refresh</string>
@@ -451,8 +463,8 @@
     <string name="settings_eh_show_gallery_pages_summary">在畫廊列表中顯示頁數</string>
     <string name="settings_eh_show_tag_translations">顯示標籤翻譯</string>
     <string name="settings_eh_show_tag_translations_summary">顯示翻譯後的標籤而非原始文字（需花費時間來下載數據文件）</string>
-    <string name="settings_eh_tag_translations_source">補充翻譯（由 EhTagTranslator 提供）</string>
-    <string name="settings_eh_tag_translations_source_url">https://github.com/Mapaler/EhTagTranslator/wiki</string>
+    <string name="settings_eh_tag_translations_source">補充翻譯（由 EhTagTranslation 提供）</string>
+    <string name="settings_eh_tag_translations_source_url">https://github.com/EhTagTranslation/Editor/wiki</string>
     <string name="settings_eh_filter">屏蔽畫廊</string>
     <string name="settings_eh_filter_summary">根據標題、上傳者、標籤屏蔽畫廊</string>
     <string name="settings_eh_cellular_network_warning">移動網絡警告</string>

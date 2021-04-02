@@ -116,6 +116,28 @@
         <item>7</item>
     </string-array>
 
+    <string-array name="download_delay_entries" translatable="false">
+        <item>0</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>1500</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>10000</item>
+        <item>20000</item>
+    </string-array>
+
+    <string-array name="download_delay_entry_values" translatable="false">
+        <item>0</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>1500</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>10000</item>
+        <item>20000</item>
+    </string-array>
+
     <string-array name="preload_image_entries" translatable="false">
         <item>3</item>
         <item>5</item>
@@ -156,12 +178,14 @@
         <item>@string/settings_read_screen_rotation_default</item>
         <item>@string/settings_read_screen_rotation_portrait</item>
         <item>@string/settings_read_screen_rotation_landscape</item>
+        <item>@string/settings_read_screen_rotation_sensor</item>
     </string-array>
 
     <string-array name="screen_rotation_entry_values" translatable="false">
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="reading_direction_entries">

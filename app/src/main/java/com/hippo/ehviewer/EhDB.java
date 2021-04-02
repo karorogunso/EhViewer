@@ -44,10 +44,11 @@ import com.hippo.ehviewer.dao.QuickSearchDao;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.util.ExceptionUtils;
 import com.hippo.util.SqlUtils;
-import com.hippo.yorozuya.FileUtils;
 import com.hippo.yorozuya.IOUtils;
 import com.hippo.yorozuya.ObjectUtils;
 import com.hippo.yorozuya.collect.SparseJLArray;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.query.CloseableListIterator;
 import de.greenrobot.dao.query.LazyList;
 import java.io.File;
 import java.io.FileInputStream;
@@ -119,6 +120,30 @@ public class EhDB {
                     "SELECT _id, NAME, MODE, CATEGORY, KEYWORD, ADVANCE_SEARCH, MIN_RATING, -1, -1, TIME FROM QUICK_SEARCH;");
                 db.execSQL("DROP TABLE QUICK_SEARCH");
                 db.execSQL("ALTER TABLE QUICK_SEARCH2 RENAME TO QUICK_SEARCH");
+            case 4: //4 to 5, add TOTAL column to DOWNLOADS
+                db.execSQL("CREATE TABLE " + "\"DOWNLOADS2\" (" + //
+                        "\"GID\" INTEGER PRIMARY KEY NOT NULL ," + // 0: gid
+                        "\"TOKEN\" TEXT," + // 1: token
+                        "\"TITLE\" TEXT," + // 2: title
+                        "\"TITLE_JPN\" TEXT," + // 3: titleJpn
+                        "\"THUMB\" TEXT," + // 4: thumb
+                        "\"CATEGORY\" INTEGER NOT NULL ," + // 5: category
+                        "\"POSTED\" TEXT," + // 6: posted
+                        "\"UPLOADER\" TEXT," + // 7: uploader
+                        "\"RATING\" REAL NOT NULL ," + // 8: rating
+                        "\"SIMPLE_LANGUAGE\" TEXT," + // 9: simpleLanguage
+                        "\"STATE\" INTEGER NOT NULL ," + // 10: state
+                        "\"LEGACY\" INTEGER NOT NULL ," + // 11: legacy
+                        "\"TIME\" INTEGER NOT NULL ," + // 12: time
+                        "\"LABEL\" TEXT," + // 13: label
+                        "\"TOTAL\" INTEGER);"); // 14: total
+                db.execSQL("INSERT INTO \"DOWNLOADS2\" (" +
+                        "GID, TOKEN, TITLE, TITLE_JPN, THUMB, CATEGORY, POSTED, UPLOADER," +
+                        " RATING, SIMPLE_LANGUAGE, STATE, LEGACY, TIME, LABEL, TOTAL)" +
+                        "SELECT GID, TOKEN, TITLE, TITLE_JPN, THUMB, CATEGORY, POSTED, UPLOADER," +
+                        " RATING, SIMPLE_LANGUAGE, STATE, LEGACY, TIME, LABEL, -1 FROM DOWNLOADS;");
+                db.execSQL("DROP TABLE DOWNLOADS");
+                db.execSQL("ALTER TABLE DOWNLOADS2 RENAME TO DOWNLOADS");
         }
     }
 
@@ -645,30 +670,64 @@ public class EhDB {
         sDaoSession.getFilterDao().update(filter);
     }
 
-    public static synchronized boolean exportDB(Context context, File file) {
-        File dbFile = context.getDatabasePath("eh.db");
-        if (null == dbFile || !dbFile.isFile()) {
-            return false;
-        }
-        if (null == file || !FileUtils.ensureFile(file)) {
-            return false;
-        }
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(dbFile);
-            os = new FileOutputStream(file);
-            IOUtils.copy(is, os);
-            return true;
+    private static <T> boolean copyDao(AbstractDao<T, ?> from, AbstractDao<T, ?> to) {
+        try (CloseableListIterator<T> iterator = from.queryBuilder().listIterator()) {
+            while (iterator.hasNext()) {
+                to.insert(iterator.next());
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(os);
+            return false;
         }
-        // Delete failed file
-        file.delete();
-        return false;
+        return true;
+    }
+
+    public static synchronized boolean exportDB(Context context, File file) {
+        final String ehExportName = "eh.export.db";
+
+        // Delete old export db
+        context.deleteDatabase(ehExportName);
+
+        DBOpenHelper helper = new DBOpenHelper(context.getApplicationContext(), ehExportName, null);
+
+        try {
+            // Copy data to a export db
+            try (SQLiteDatabase db = helper.getWritableDatabase()) {
+                DaoMaster daoMaster = new DaoMaster(db);
+                DaoSession exportSession = daoMaster.newSession();
+                if (!copyDao(sDaoSession.getDownloadsDao(), exportSession.getDownloadsDao())) return false;
+                if (!copyDao(sDaoSession.getDownloadLabelDao(), exportSession.getDownloadLabelDao())) return false;
+                if (!copyDao(sDaoSession.getDownloadDirnameDao(), exportSession.getDownloadDirnameDao())) return false;
+                if (!copyDao(sDaoSession.getHistoryDao(), exportSession.getHistoryDao())) return false;
+                if (!copyDao(sDaoSession.getQuickSearchDao(), exportSession.getQuickSearchDao())) return false;
+                if (!copyDao(sDaoSession.getLocalFavoritesDao(), exportSession.getLocalFavoritesDao())) return false;
+                if (!copyDao(sDaoSession.getBookmarksBao(), exportSession.getBookmarksBao())) return false;
+                if (!copyDao(sDaoSession.getFilterDao(), exportSession.getFilterDao())) return false;
+            }
+
+            // Copy export db to data dir
+            File dbFile = context.getDatabasePath(ehExportName);
+            if (dbFile == null || !dbFile.isFile()) {
+                return false;
+            }
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = new FileInputStream(dbFile);
+                os = new FileOutputStream(file);
+                IOUtils.copy(is, os);
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                IOUtils.closeQuietly(is);
+                IOUtils.closeQuietly(os);
+            }
+            // Delete failed file
+            file.delete();
+            return false;
+        } finally {
+            context.deleteDatabase(ehExportName);
+        }
     }
 
     /**

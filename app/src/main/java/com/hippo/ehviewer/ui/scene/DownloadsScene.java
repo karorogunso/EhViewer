@@ -58,6 +58,7 @@ import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hippo.android.resource.AttrResources;
 import com.hippo.app.CheckBoxDialogBuilder;
+import com.hippo.beerbelly.SimpleDiskCache;
 import com.hippo.conaco.DataContainer;
 import com.hippo.conaco.ProgressNotifier;
 import com.hippo.drawerlayout.DrawerLayout;
@@ -77,6 +78,7 @@ import com.hippo.ehviewer.dao.DownloadLabel;
 import com.hippo.ehviewer.download.DownloadManager;
 import com.hippo.ehviewer.download.DownloadService;
 import com.hippo.ehviewer.spider.SpiderDen;
+import com.hippo.ehviewer.spider.SpiderInfo;
 import com.hippo.ehviewer.ui.GalleryActivity;
 import com.hippo.ehviewer.ui.MainActivity;
 import com.hippo.ehviewer.widget.SimpleRatingView;
@@ -103,6 +105,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import static com.hippo.ehviewer.spider.SpiderQueen.SPIDER_INFO_FILENAME;
 
 public class DownloadsScene extends ToolbarScene
         implements DownloadManager.DownloadInfoListener,
@@ -118,7 +121,9 @@ public class DownloadsScene extends ToolbarScene
     private static final String KEY_LABEL = "label";
 
     public static final String ACTION_CLEAR_DOWNLOAD_SERVICE = "clear_download_service";
+    private static final int REQUEST_GALLERY_CLOSE = 0;
 
+    private int lastPosition;
     /*---------------
      Whole life cycle
      ---------------*/
@@ -470,11 +475,11 @@ public class DownloadsScene extends ToolbarScene
     public boolean onMenuItemClick(MenuItem item) {
         // Skip when in choice mode
         Activity activity = getActivity2();
-        if (null == activity || null == mRecyclerView || mRecyclerView.isInCustomChoice()) {
+        int id = item.getItemId();
+        if ((null == activity || null == mRecyclerView || mRecyclerView.isInCustomChoice()) && item.getItemId() != R.id.action_select_below) {
             return false;
         }
 
-        int id = item.getItemId();
         switch (id) {
             case R.id.action_start_all: {
                 Intent intent = new Intent(activity, DownloadService.class);
@@ -497,6 +502,71 @@ public class DownloadsScene extends ToolbarScene
                                 mDownloadManager.resetAllReadingProgress();
                             }
                         }).show();
+                return true;
+            }
+            case R.id.action_select_all:{
+                EasyRecyclerView recyclerView = mRecyclerView;
+                recyclerView.intoCustomChoiceMode();
+                recyclerView.checkAll();
+                return true;
+            }
+            case R.id.action_edit_mode: {
+                mRecyclerView.intoCustomChoiceMode();
+                return true;
+            }
+            case R.id.action_select_below: {
+                EasyRecyclerView recyclerView = mRecyclerView;
+                if (recyclerView.isInCustomChoice()) {
+                    SparseBooleanArray stateArray = recyclerView.getCheckedItemPositions();
+                    int firstSelectedIndex = -1;
+                    for (int i = 0, n = stateArray.size(); i < n; i++) {
+                        if (stateArray.valueAt(i)) {
+                            firstSelectedIndex = stateArray.keyAt(i);
+                            break;
+                        }
+                    }
+                    if (firstSelectedIndex > -1 && mAdapter != null)
+                        for (int i = firstSelectedIndex, n = mAdapter.getItemCount(); i < n; i++) {
+                            recyclerView.setItemChecked(i, true);
+                        }
+                }
+                return true;
+            }
+            case R.id.action_select_read: {
+                mRecyclerView.intoCustomChoiceMode();
+                for (int i = 0, n = mAdapter.getItemCount(); i < n; i++) {
+                    SpiderInfo spiderInfo = mAdapter.readSpiderInfoFromLocalByInfo(mList.get(i));
+                    if (spiderInfo != null && spiderInfo.startPage > 0) {
+                        mRecyclerView.setItemChecked(i, true);
+                    }
+                }
+                return true;
+            }
+            case R.id.action_select_done:{
+                mRecyclerView.intoCustomChoiceMode();
+                for (int i = 0, n = mAdapter.getItemCount(); i < n; i++) {
+                    if (mList.get(i).getState() == DownloadInfo.STATE_FINISH) {
+                        mRecyclerView.setItemChecked(i, true);
+                    }
+                }
+                return true;
+            }
+            case R.id.action_start_all_reversed: {
+                List<DownloadInfo> list = mList;
+                if (list == null) {
+                    return true;
+                }
+                LongList gidList = new LongList();
+                for (int i = list.size() - 1; i > -1; i--) {
+                    DownloadInfo info = list.get(i);
+                    if(info.state!=DownloadInfo.STATE_FINISH){
+                        gidList.add(info.gid);
+                    }
+                }
+                Intent intent = new Intent(activity, DownloadService.class);
+                intent.setAction(DownloadService.ACTION_START_RANGE);
+                intent.putExtra(DownloadService.KEY_GID_LIST, gidList);
+                activity.startService(intent);
                 return true;
             }
         }
@@ -652,8 +722,18 @@ public class DownloadsScene extends ToolbarScene
             Intent intent = new Intent(activity, GalleryActivity.class);
             intent.setAction(GalleryActivity.ACTION_EH);
             intent.putExtra(GalleryActivity.KEY_GALLERY_INFO, list.get(position));
-            startActivity(intent);
+            lastPosition = position;
+            startActivityForResult(intent, REQUEST_GALLERY_CLOSE);
             return true;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_GALLERY_CLOSE == requestCode) {
+            if (mAdapter != null) {
+                mAdapter.notifyItemChanged(lastPosition);
+            }
         }
     }
 
@@ -1066,6 +1146,7 @@ public class DownloadsScene extends ToolbarScene
         public final ProgressBar progressBar;
         public final TextView percent;
         public final TextView speed;
+        public final TextView readProgress;
 
         public DownloadHolder(View itemView) {
             super(itemView);
@@ -1081,6 +1162,7 @@ public class DownloadsScene extends ToolbarScene
             progressBar = (ProgressBar) itemView.findViewById(R.id.progress_bar);
             percent = (TextView) itemView.findViewById(R.id.percent);
             speed = (TextView) itemView.findViewById(R.id.speed);
+            readProgress = itemView.findViewById(R.id.read_progress);
 
             // TODO cancel on click listener when select items
             thumb.setOnClickListener(this);
@@ -1166,12 +1248,59 @@ public class DownloadsScene extends ToolbarScene
             return holder;
         }
 
+        private SpiderInfo readSpiderInfoFromLocalByInfo(DownloadInfo info) {
+            // Read from download dir
+            SpiderDen spiderDen = new SpiderDen(info);
+            UniFile downloadDir = spiderDen.getDownloadDir();
+            if (downloadDir != null) {
+                UniFile file = downloadDir.findFile(SPIDER_INFO_FILENAME);
+                SpiderInfo spiderInfo = SpiderInfo.read(file);
+                if (spiderInfo != null && spiderInfo.gid == info.gid &&
+                        spiderInfo.token.equals(info.token)) {
+                    return spiderInfo;
+                }
+            }
+
+            // Read from cache
+            Context context = getActivity2();
+            EhApplication application = (EhApplication) context.getApplicationContext();
+            SimpleDiskCache spiderInfoCache= EhApplication.getSpiderInfoCache(application);
+            InputStreamPipe pipe = spiderInfoCache.getInputStreamPipe(Long.toString(info.gid));
+            if (null != pipe) {
+                try {
+                    pipe.obtain();
+                    SpiderInfo spiderInfo = SpiderInfo.read(pipe.open());
+                    if (spiderInfo != null && spiderInfo.gid == info.gid &&
+                            spiderInfo.token.equals(info.token)) {
+                        return spiderInfo;
+                    }
+                } catch (IOException e) {
+                    // Ignore
+                } finally {
+                    pipe.close();
+                    pipe.release();
+                }
+            }
+
+            return null;
+        }
+
+        @SuppressLint("SetTextI18n")
         @Override
         public void onBindViewHolder(DownloadHolder holder, int position) {
             if (mList == null) {
                 return;
             }
             DownloadInfo info = mList.get(position);
+            SpiderInfo spiderInfo = readSpiderInfoFromLocalByInfo(info);
+            if (spiderInfo == null) {
+                holder.readProgress.setText(1 + "/" + info.total);
+                holder.readProgress.setTextColor(Color.rgb(255, 0, 0));
+            } else {
+                holder.readProgress.setText((spiderInfo.startPage + 1) + "/" + spiderInfo.pages);
+                int read255th = spiderInfo.startPage * 255 / spiderInfo.pages;
+                holder.readProgress.setTextColor(Color.rgb(255 - read255th, read255th, 0));
+            }
             holder.thumb.load(EhCacheKeyFactory.getThumbKey(info.gid), info.thumb,
                     new ThumbDataContainer(info), true);
             holder.title.setText(EhUtils.getSuitableTitle(info));
